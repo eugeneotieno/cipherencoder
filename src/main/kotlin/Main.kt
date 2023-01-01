@@ -1,4 +1,41 @@
 fun main() {
+    decode()
+}
+
+fun decode() {
+    println("Input encoded string:")
+    val inputString = readln()
+
+    println()
+    println("The result:")
+
+    println(decodeFromChuckNorrisBinary(inputString))
+}
+
+fun decodeFromChuckNorrisBinary(text: String): String {
+    val binaryArray = text.split(" ")
+    val binaryStr = StringBuilder()
+    var tempChar: String? = null
+    for (c in binaryArray) {
+        tempChar = if (tempChar == null) {
+            c
+        } else {
+            if (tempChar == "0") {
+                binaryStr.append("1".repeat(c.length))
+                null
+            } else {
+                binaryStr.append("0".repeat(c.length))
+                null
+            }
+        }
+    }
+
+    val blocks = binaryStr.chunked(7)
+    val characters = blocks.map { it.toInt(radix = 2).toChar() }
+    return characters.joinToString("")
+}
+
+fun encode() {
     println("Input string:")
     val inputString = readln()
 
@@ -57,5 +94,3 @@ fun encodeToChuckNorrisBinary(text: String): String {
 
     return builder.toString().trim()
 }
-//0 0 00 00 0 0 00 000 0 00 00 0 0 0 00 00 0 0 00 0 0 0 00 000000 0 0000 00 000 0 00 00 00 0 00
-//0 0 00 00 0 0 00 000 0 00 00 0 0 0 00 00 0 0 00 0 0 0 00 000000 0 0000 00 000 0 00 00 00 0 00
