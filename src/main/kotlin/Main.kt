@@ -1,26 +1,67 @@
 fun main() {
-    decode()
+    var exit = false
+    do {
+        println("Please input operation (encode/decode/exit):")
+        when(val action = readln()) {
+            "encode" -> {
+                encode()
+            }
+            "decode" -> {
+                decode()
+            }
+            "exit" -> {
+                println("Bye!")
+                exit = true
+            }
+            else -> {
+                println("There is no '$action' operation")
+                println()
+            }
+        }
+    } while (!exit)
 }
 
 fun decode() {
     println("Input encoded string:")
     val inputString = readln()
 
-    println()
-    println("The result:")
+    var isValid = true
 
-    println(decodeFromChuckNorrisBinary(inputString))
+    val countValid = inputString.count { it == '0' } + inputString.count { it == ' ' }
+    if (countValid != inputString.length) isValid = false
+
+    val firstBlock = inputString.split(" ")[0]
+    if (firstBlock != "0") {
+        if (firstBlock != "00") {
+            isValid = false
+        }
+    }
+
+    if (isValid) {
+        decodeFromChuckNorrisBinary(inputString)
+    } else {
+        println("Encoded string is not valid.\n")
+    }
 }
 
-fun decodeFromChuckNorrisBinary(text: String): String {
+fun decodeFromChuckNorrisBinary(text: String) {
     val binaryArray = text.split(" ")
+
     val binaryStr = StringBuilder()
     var tempChar: String? = null
+    var isValid = true
+
     for (c in binaryArray) {
-        tempChar = if (tempChar == null) {
-            c
+        if (tempChar == null) {
+            if (c != "0") {
+                if (c != "00") {
+                    isValid = false
+                    break
+                }
+            }
+            tempChar = c
         } else {
-            if (tempChar == "0") {
+            tempChar = if (tempChar == "0") {
                 binaryStr.append("1".repeat(c.length))
                 null
             } else {
@@ -30,19 +71,30 @@ fun decodeFromChuckNorrisBinary(text: String): String {
         }
     }
 
-    val blocks = binaryStr.chunked(7)
-    val characters = blocks.map { it.toInt(radix = 2).toChar() }
-    return characters.joinToString("")
+    if (isValid) {
+        if (binaryStr.toString().length % 7 != 0) {
+            println("Encoded string is not valid.\n")
+        } else {
+            val blocks = binaryStr.chunked(7)
+            val characters = blocks.map { it.toInt(radix = 2).toChar() }
+
+            println("Decoded string:")
+            println(characters.joinToString(""))
+            println()
+        }
+    } else {
+        println("Encoded string is not valid.\n")
+    }
+
 }
 
 fun encode() {
     println("Input string:")
     val inputString = readln()
 
-    println()
-    println("The result:")
-
+    println("Encoded string:")
     println(encodeToChuckNorrisBinary(inputString))
+    println()
 }
 
 fun charTo7BitBinary(c: Char): String {
